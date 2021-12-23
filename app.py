@@ -11,6 +11,7 @@ app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
 app.config['MYSQL_DB'] = db['mysql_db']
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
@@ -21,12 +22,13 @@ def index():
     resultvalue = cur.execute('SELECT * FROM ip WHERE ip_address = %s', [ip_add])
     if resultvalue > 0:
         get_ip_add = cur.fetchone()
+        address = get_ip_add['ip_address']
         count = get_ip_add['visit_count'] + 1
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO ip(visit_count) VALUES(%s)", [count])
+        cur.execute("UPDATE ip SET visit_count = %s WHERE ip_address = %s", (count, address))
         mysql.connection.commit()
         cur.close()
-        print('You have visited ' + get_ip_add['visit_count'] + ' times to this page')
+        print('You have visited ' + str(count) + ' times to this page')
     else:
         cur = mysql.connection.cursor()
         cur.execute('INSERT INTO ip (ip_address, visit_count) VALUES (%s, %s)', (ip_add, 1))
