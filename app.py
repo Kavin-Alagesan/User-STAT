@@ -14,7 +14,7 @@ app.config['MYSQL_DB'] = db['mysql_db']
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-
+#User login count
 @app.route('/', methods=['GET', 'POST'])
 def index():
     ip_add = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
